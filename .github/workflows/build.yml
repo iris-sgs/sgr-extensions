@@ -1,0 +1,66 @@
+name: Build Extension
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android build tools
+        run: |
+          sdkmanager "build-tools;34.0.0" "platforms;android-34"
+
+      - name: Generate debug keystore
+        run: |
+          keytool -genkey -v \
+            -keystore debug.keystore \
+            -alias androiddebugkey \
+            -keyalg RSA -keysize 2048 \
+            -validity 10000 \
+            -storepass android \
+            -keypass android \
+            -dname "CN=Iris SGS, OU=SGS, O=SGS, L=UK, S=UK, C=GB"
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build APK
+        run: ./gradlew :en:cyrisia:assembleRelease
+
+      - name: Locate APK
+        id: apk
+        run: |
+          APK=$(find . -name "tachiyomi-en-cyrisia*.apk" | head -1)
+          echo "path=$APK" >> $GITHUB_OUTPUT
+          echo "name=$(basename $APK)" >> $GITHUB_OUTPUT
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: cyrisia-extension
+          path: ${{ steps.apk.outputs.path }}
+
+      - name: Create/update GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v1.4.1
+          name: "Cyrisia Light Novels v1.4.1"
+          files: ${{ steps.apk.outputs.path }}
+          body: |
+            Cyrisia Light Novels Tachiyomi extension.
+            Serves light novel epubs from cyrisia.com / server.elscione.com.

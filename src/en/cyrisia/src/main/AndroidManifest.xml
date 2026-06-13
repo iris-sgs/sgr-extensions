@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application android:label="Cyrisia Light Novels">
+        <!-- Suwayomi loads: packageName + value  ->  ....en.cyrisia.Cyrisia -->
+        <meta-data
+            android:name="tachiyomi.extension.class"
+            android:value=".Cyrisia" />
+        <meta-data
+            android:name="tachiyomi.extension.nsfw"
+            android:value="0" />
+    </application>
+
+</manifest>
