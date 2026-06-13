@@ -27,30 +27,21 @@ jobs:
         run: |
           sdkmanager "build-tools;34.0.0" "platforms;android-34"
 
-      - name: Generate debug keystore
-        run: |
-          keytool -genkey -v \
-            -keystore debug.keystore \
-            -alias androiddebugkey \
-            -keyalg RSA -keysize 2048 \
-            -validity 10000 \
-            -storepass android \
-            -keypass android \
-            -dname "CN=Iris SGS, OU=SGS, O=SGS, L=UK, S=UK, C=GB"
-
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
 
-      - name: Build APK
-        run: ./gradlew :src:en:cyrisia:assembleRelease
+      - name: Build debug APK
+        run: ./gradlew :src:en:cyrisia:assembleDebug --stacktrace
 
-      - name: Locate APK
+      - name: Collect APK
         id: apk
         run: |
-          APK=$(find . -name "*.apk" -not -path "*/intermediates/*" | head -1)
+          APK=$(find . -path '*/outputs/apk/debug/*.apk' | head -1)
+          if [ -z "$APK" ]; then echo "No debug APK produced"; exit 1; fi
           echo "Found APK: $APK"
-          echo "path=$APK" >> $GITHUB_OUTPUT
-          echo "name=$(basename $APK)" >> $GITHUB_OUTPUT
+          mkdir -p out
+          cp "$APK" "out/tachiyomi-en.cyrisia-v1.4.1.apk"
+          echo "path=out/tachiyomi-en.cyrisia-v1.4.1.apk" >> $GITHUB_OUTPUT
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
@@ -58,12 +49,17 @@ jobs:
           name: cyrisia-extension
           path: ${{ steps.apk.outputs.path }}
 
-      - name: Create/update GitHub Release
+      - name: Delete existing release
+        run: gh release delete v1.4.1 --yes --cleanup-tag 2>/dev/null || true
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v1.4.1
           name: "Cyrisia Light Novels v1.4.1"
           files: ${{ steps.apk.outputs.path }}
           body: |
-            Cyrisia Light Novels Tachiyomi extension.
-            Serves light novel epubs from cyrisia.com / server.elscione.com.
+            Tachiyomi/Suwayomi extension for cyrisia.com light novels.
+            Add to Suwayomi as a custom repo: http://192.168.0.125:3001/ext/index.min.json
