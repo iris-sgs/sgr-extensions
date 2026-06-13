@@ -40,7 +40,7 @@ jobs:
         run: chmod +x gradlew
 
       - name: Build APK
-        run: ./gradlew :en:cyrisia:assembleRelease
+        run: ./gradlew :src:en:cyrisia:assembleRelease
 
       - name: Locate APK
         id: apk
