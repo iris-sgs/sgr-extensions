@@ -45,7 +45,8 @@ jobs:
       - name: Locate APK
         id: apk
         run: |
-          APK=$(find . -name "tachiyomi-en-cyrisia*.apk" | head -1)
+          APK=$(find . -name "*.apk" -not -path "*/intermediates/*" | head -1)
+          echo "Found APK: $APK"
           echo "path=$APK" >> $GITHUB_OUTPUT
           echo "name=$(basename $APK)" >> $GITHUB_OUTPUT
 
