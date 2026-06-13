@@ -1,7 +1,7 @@
 [{
   "name": "Cyrisia Light Novels",
   "pkg": "eu.kanade.tachiyomi.extension.en.cyrisia",
-  "apk": "tachiyomi-en.cyrisia-v1.4.1.apk",
+  "apk": "https://raw.githubusercontent.com/iris-sgs/sgr-extensions/repo/tachiyomi-en.cyrisia-v1.4.1.apk",
   "lang": "en",
   "code": 1,
   "version": "1.4.1",
