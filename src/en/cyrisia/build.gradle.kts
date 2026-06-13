@@ -9,10 +9,8 @@ android {
 
     defaultConfig {
         applicationId = "eu.kanade.tachiyomi.extension.en.cyrisia"
-        minSdk = 29
+        minSdk = 21
         targetSdk = 34
-        // Suwayomi parses the index `version` (e.g. "1.4.1") as the lib version and
-        // requires it in [1.3, 1.5]; keep the APK versionName aligned with that.
         versionCode = 1
         versionName = "1.4.1"
     }
@@ -21,20 +19,19 @@ android {
         archivesName.set("tachiyomi-en.cyrisia-v1.4.1")
     }
 
-    // The Tachiyomi/Suwayomi runtime provides these libraries; do not bundle them.
     dependenciesInfo {
         includeInApk = false
         includeInBundle = false
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
 
     kotlin {
         compilerOptions {
-            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_11)
         }
     }
 }
